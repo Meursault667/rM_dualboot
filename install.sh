@@ -1,20 +1,10 @@
 set -e
 
-if ! command chronic &> /dev/null;then
-    function chronic(){
-        tmp=$(mktemp) || return
-        "$@" > "$tmp" 2>&1
-        ret=$?
-        [ "$ret" -eq 0 ] || cat "$tmp"
-        rm -f "$tmp"
-        return "$ret"
-    }
-fi
 echo "Creating /tmp/rM_dualboot"
 mkdir /tmp/rM_dualboot || true
 echo "Retrieving files......"
-chronic wget -O switch.sh -r https://raw.githubusercontent.com/ddvk/remarkable-update/main/switch.sh
-chronic wget -O /tmp/rM_dualboot/switch_service.service https://raw.githubusercontent.com/FouzR/rM_dualboot/main/switch_service.service
+wget -O switch.sh -r https://raw.githubusercontent.com/ddvk/remarkable-update/main/switch.sh
+wget -O /tmp/rM_dualboot/switch_service.service https://raw.githubusercontent.com/FouzR/rM_dualboot/main/switch_service.service
 echo "Retrieved switch.sh and the service files"
 declare -A checksums=(
 ["./switch.sh"]="c6b165745d67cb7adc62d7826253ad027a55ee2551d189c37f7d3181e7358044"
@@ -64,7 +54,7 @@ mkdir /mnt/old_part || true
 # the active_partiton, annoyingly
 
 systemctl daemon-reload
-chronic systemctl enable --now switch_service.service
+systemctl enable --now switch_service.service
 echo "Successfully enabled the service"
 # The below code aims to do the same but for the other partition
 
